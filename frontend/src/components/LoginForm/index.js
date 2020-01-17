@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Link} from 'react-router-dom';
 
 
 function LoginForm ({ onSubmit }){
@@ -41,7 +42,9 @@ function LoginForm ({ onSubmit }){
           onChange={e => setDate(e.target.value)}
         ></input>
       </div>
-      <button type="submit">Buscar</button>
+      <button type="submit">
+          Buscar  
+      </button>
     </form>
     )
 }
