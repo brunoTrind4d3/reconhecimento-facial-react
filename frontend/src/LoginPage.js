@@ -1,37 +1,51 @@
-import React, {useState} from 'react'
-import LoginForm from './components/LoginForm'
-import api from './services/api'
+import React, { useState, useEffect } from 'react';
+import LoginForm from './components/LoginForm';
+import api from './services/api';
 import './App.css';
 import './Sidebar.css';
-import './global.css'
+import './global.css';
 import history from './services/history';
 
-export default function LoginPage(){
+export default function LoginPage() {
+  const [travel, setTravel] = useState({});
 
-    const[travel, setTravel] = useState([]); 
+  useEffect(() => {
+    async function loadTravel() {
+      const response = await api.get('/travel', {
+        params: {
+          travel_number: travel.travel_number,
+          date: travel.date,
+        },
+      });
 
-    async function loadTravel(data) {
-  
-      const {travel_number, date} = data;
-      const response = await api.get('/travel', { 
-       params:{
-         travel_number,
-         date
-       },
-     })
-      console.log(response.status);
-      setTravel(response.data);
-      if(respose){
-          history.push('/appPage')
+      if (response.data) {
+        goToTravel(response.data);
       }
     }
+    loadTravel();
+  }, [travel]);
 
+  function handleSubmit(data) {
+    setTravel(data);
+  }
 
+  function goToTravel({ travel }) {
+    if (travel.length > 0) {
+      const { passangers } = travel[0];
 
-    return (<div id="app">
-    <aside>
-      <strong>Seja bem-vindo!</strong>
-      <LoginForm onSubmit={loadTravel} />
-    </aside>
-  </div>);
+      history.push({
+        pathname: '/appPage',
+        passangers: passangers,
+      });
+    }
+  }
+
+  return (
+    <div id="app">
+      <aside>
+        <strong>Informe sua viagem!</strong>
+        <LoginForm onSubmit={handleSubmit} />
+      </aside>
+    </div>
+  );
 }

@@ -1,8 +1,11 @@
-import React from 'react'
+import React from 'react';
 
-export default function AppPage(){
+export default function AppPage(data) {
+  console.log(data.location.passangers);
 
-    return (<div>
-        <h1>TESTE</h1>
-  </div>);
+  return (
+    <div>
+      <h1>Teste</h1>
+    </div>
+  );
 }

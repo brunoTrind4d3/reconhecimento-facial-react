@@ -14,9 +14,9 @@ body,
 }
 
 body {
-    background: #2c3e50; 
-    background: -webkit-linear-gradient(to right, #2c3e50, #4ca1af);
-    background: linear-gradient(to right, #2c3e50, #4ca1af);
+  background: #2c3e50;
+  background: -webkit-linear-gradient(to right, #2c3e50, #4ca1af);
+  background: linear-gradient(to right, #2c3e50, #4ca1af);
   -webkit-font-smoothing: antialiased;
 }
 
