@@ -4,8 +4,43 @@ img {
   border-radius: 50%;
 }
 
+.react-html5-camera-photo > img,
+.react-html5-camera-photo > video {
+  max-width: 500px;
+  border-radius: 5px;
+}
+
 video {
   width: 500px;
   border-radius: 5px;
   box-shadow: 0 0 14px 0 rgba(255, 255, 255, 0.5);
+}
+button {
+  width: 80%;
+  border: 0;
+  margin-top: 10px;
+  background: #1d2935;
+  border-radius: 10px;
+  padding: 10px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.5s;
+}
+button:hover {
+  background: #161c22;
+}
+
+div .divButton {
+  flex: 1;
+  align-items: center;
+  align-content: center;
+  margin: auto 0;
+  padding-left: 30%;
+}
+
+div.MuiTablePagination-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }

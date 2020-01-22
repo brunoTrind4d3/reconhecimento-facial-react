@@ -12,15 +12,19 @@ import Check from '@material-ui/icons/Check';
 import Close from '@material-ui/icons/Close';
 import Camera from 'react-html5-camera-photo';
 import './AppPage.css';
+import 'react-html5-camera-photo/build/css/index.css';
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
+    marginTop: 10,
   },
 
   tableContainer: {
     margin: 'auto',
     maxWidth: 650,
+    marginTop: 10,
+    flex: 1,
   },
 
   asideBox: {
@@ -33,6 +37,7 @@ const useStyles = makeStyles({
     height: 550,
     paddingTop: 30,
     paddingBottom: 30,
+    marginTop: 10,
   },
 
   mainBox: {
@@ -59,6 +64,14 @@ const useStyles = makeStyles({
     paddingTop: 30,
     justifyContent: 'center',
   },
+
+  tablePagination: {
+    backgroundColor: '#fff',
+    margin: 'auto',
+    maxWidth: 650,
+    borderRadius: 5,
+    paddingRight: 10,
+  },
 });
 
 export default function AppPage(data) {
@@ -74,9 +87,13 @@ export default function AppPage(data) {
     setPage(0);
   };
 
+  function handleTakePhoto(dataUri) {
+    // Do stuff with the photo...
+    console.log(dataUri);
+  }
+
   const classes = useStyles();
   const passengers = data.location.passangers;
-  console.log(passengers);
   return (
     <>
       <div className={classes.title}>
@@ -84,7 +101,12 @@ export default function AppPage(data) {
       </div>
       <div className={classes.div}>
         <aside className={classes.asideBox}>
-          <Camera />
+          <Camera
+            style={{ color: '#fff' }}
+            onTakePhoto={dataUri => {
+              handleTakePhoto(dataUri);
+            }}
+          />
         </aside>
         <main className={classes.mainBox}>
           <TableContainer className={classes.tableContainer} component={Paper}>
@@ -102,35 +124,38 @@ export default function AppPage(data) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {passengers.map(row => (
-                  <TableRow key={row._id}>
-                    <TableCell align="center">
-                      {
-                        <img
-                          className="img"
-                          src={row.photoUrl}
-                          alt={row.name}
-                        />
-                      }
-                    </TableCell>
-                    <TableCell align="left" component="th" scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">{row.passportCard}</TableCell>
-                    <TableCell align="center">
-                      {row.checked ? (
-                        <Check size={20} style={{ color: 'green' }} />
-                      ) : (
-                        <Close size={20} style={{ color: 'red' }} />
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {passengers
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(row => (
+                    <TableRow key={row._id}>
+                      <TableCell align="center">
+                        {
+                          <img
+                            className="img"
+                            src={row.photoUrl}
+                            alt={row.name}
+                          />
+                        }
+                      </TableCell>
+                      <TableCell align="left" component="th" scope="row">
+                        {row.name}
+                      </TableCell>
+                      <TableCell align="right">{row.passportCard}</TableCell>
+                      <TableCell align="center">
+                        {row.checked ? (
+                          <Check size={20} style={{ color: 'green' }} />
+                        ) : (
+                          <Close size={20} style={{ color: 'red' }} />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[4]}
+            className={classes.tablePagination}
+            rowsPerPageOptions={4}
             component="div"
             count={passengers.length}
             rowsPerPage={rowsPerPage}
