@@ -4,8 +4,9 @@ const Passanger = require("./utils/Passanger");
 const TravelSchema = new mongoose.Schema({
   travel_number: String,
   date: String,
+  travel_location: String,
   passangers: {
-    type: [Passanger],
+    type: [Passanger]
   }
 });
 

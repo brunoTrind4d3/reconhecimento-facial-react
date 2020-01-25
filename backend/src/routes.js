@@ -4,5 +4,6 @@ const routes = Router();
 
 routes.post("/travel", TravelControlle.store);
 routes.get("/travel", TravelControlle.index);
+routes.post("/search", TravelControlle.recognize);
 
 module.exports = routes;
