@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
 img {
   width: 54px;
   height: 54px;
@@ -8,6 +10,22 @@ img {
 .react-html5-camera-photo > video {
   max-width: 500px;
   border-radius: 5px;
+}
+
+.MuiPaper-root.MuiPaper-elevation1.MuiPaper-rounded {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.divTravel {
+  color: #000;
+  font-display: Roboto, sans-serif;
+  font-size: 24px;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+  max-width: 600px;
+  margin: auto;
 }
 
 video {

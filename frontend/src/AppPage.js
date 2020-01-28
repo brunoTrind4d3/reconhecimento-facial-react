@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,6 +13,8 @@ import Close from '@material-ui/icons/Close';
 import Camera from 'react-html5-camera-photo';
 import './AppPage.css';
 import 'react-html5-camera-photo/build/css/index.css';
+import api from './services/api';
+import history from './services/history';
 
 const useStyles = makeStyles({
   table: {
@@ -41,7 +43,7 @@ const useStyles = makeStyles({
   },
 
   mainBox: {
-    paddingTop: 30,
+    paddingTop: 40,
     minWidth: 690,
     borderRadius: 2,
     margin: 'top',
@@ -63,6 +65,7 @@ const useStyles = makeStyles({
     color: '#fff',
     paddingTop: 30,
     justifyContent: 'center',
+    marginBottom: 30,
   },
 
   tablePagination: {
@@ -72,11 +75,34 @@ const useStyles = makeStyles({
     borderRadius: 5,
     paddingRight: 10,
   },
+
+  titleNovo: {
+    flexGrow: 1,
+  },
+
+  root: {
+    flexGrow: 1,
+  },
 });
 
-export default function AppPage(data) {
+export default function AppPage({ location }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(4);
+  const [travel, setData] = React.useState({});
+  const [passangers, setPassangers] = React.useState([]);
+
+  useEffect(() => {
+    async function loadData({ travel }) {
+      console.log(travel);
+      if (travel) {
+        setData(travel);
+        setPassangers(travel.passangers);
+      } else {
+        history.push('/');
+      }
+    }
+    loadData(location);
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -87,21 +113,39 @@ export default function AppPage(data) {
     setPage(0);
   };
 
-  function handleTakePhoto(dataUri) {
-    // Do stuff with the photo...
-    console.log(dataUri);
+  async function handleTakePhoto(dataUri) {
+    const response = await api.post('/search', {
+      params: {
+        travel_number: travel.travel_number,
+        date: travel.date,
+        dataUri: dataUri,
+      },
+    });
+
+    if (response.data) {
+      console.log('OK');
+    }
+    console.log(response);
   }
 
   const classes = useStyles();
-  const passengers = data.location.passangers;
+
   return (
     <>
       <div className={classes.title}>
         <h1>Sua logo aqui</h1>
+        <br />
+      </div>
+      <div className="divTravel">
+        <h5>Viagem: {travel.travel_number}</h5>
+        <h5>Destino: {travel.travel_location}</h5>
+
+        <h5>Data: {travel.date}</h5>
       </div>
       <div className={classes.div}>
         <aside className={classes.asideBox}>
           <Camera
+            idealResolution={{ width: 200, height: 200 }}
             style={{ color: '#fff' }}
             onTakePhoto={dataUri => {
               handleTakePhoto(dataUri);
@@ -109,60 +153,65 @@ export default function AppPage(data) {
           />
         </aside>
         <main className={classes.mainBox}>
-          <TableContainer className={classes.tableContainer} component={Paper}>
-            <Table
-              className={classes.table}
-              size="small"
-              aria-label="a dense table"
+          <Paper>
+            <TableContainer
+              className={classes.tableContainer}
+              component={Paper}
             >
-              <TableHead>
-                <TableRow>
-                  <TableCell></TableCell>
-                  <TableCell align="left">Nome</TableCell>
-                  <TableCell align="center">Nº passagem</TableCell>
-                  <TableCell align="center">Embarcado</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {passengers
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map(row => (
-                    <TableRow key={row._id}>
-                      <TableCell align="center">
-                        {
-                          <img
-                            className="img"
-                            src={row.photoUrl}
-                            alt={row.name}
-                          />
-                        }
-                      </TableCell>
-                      <TableCell align="left" component="th" scope="row">
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.passportCard}</TableCell>
-                      <TableCell align="center">
-                        {row.checked ? (
-                          <Check size={20} style={{ color: 'green' }} />
-                        ) : (
-                          <Close size={20} style={{ color: 'red' }} />
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            className={classes.tablePagination}
-            rowsPerPageOptions={4}
-            component="div"
-            count={passengers.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
-          />
+              <Table
+                className={classes.table}
+                size="small"
+                aria-label="a dense table"
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell></TableCell>
+                    <TableCell align="left">Nome</TableCell>
+                    <TableCell align="center">Nº passagem</TableCell>
+                    <TableCell align="center">Embarcado</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {passangers
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map(row => (
+                      <TableRow key={row._id}>
+                        <TableCell align="center">
+                          {
+                            <img
+                              className="img"
+                              src={row.photoUrl}
+                              alt={row.name}
+                            />
+                          }
+                        </TableCell>
+                        <TableCell align="left" component="th" scope="row">
+                          {row.name}
+                        </TableCell>
+                        <TableCell align="right">{row.passportCard}</TableCell>
+                        <TableCell align="center">
+                          {row.checked ? (
+                            <Check size={20} style={{ color: 'green' }} />
+                          ) : (
+                            <Close size={20} style={{ color: 'red' }} />
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              className={classes.tablePagination}
+              rowsPerPageOptions={4}
+              component="div"
+              count={passangers.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </Paper>
         </main>
       </div>
     </>

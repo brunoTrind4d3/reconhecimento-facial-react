@@ -31,11 +31,11 @@ export default function LoginPage() {
 
   function goToTravel({ travel }) {
     if (travel.length > 0) {
-      const { passangers } = travel[0];
+      const traveled = travel[0];
 
       history.push({
         pathname: '/appPage',
-        passangers: passangers,
+        travel: traveled,
       });
     }
   }

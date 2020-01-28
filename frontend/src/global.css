@@ -14,9 +14,13 @@ body,
 }
 
 body {
-  background: #2c3e50;
-  background: -webkit-linear-gradient(to right, #2c3e50, #4ca1af);
-  background: linear-gradient(to right, #2c3e50, #4ca1af);
+  background: #076585; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #076585,
+    #fff
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #076585, #fff);
   -webkit-font-smoothing: antialiased;
 }
 
