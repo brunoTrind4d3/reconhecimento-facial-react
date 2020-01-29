@@ -30,19 +30,36 @@ module.exports = {
     const { travel_number, date, dataUri } = request.body;
 
     let travel = await Travel.findOne({ travel_number, date });
-    // const imageReceived = new Image(dataUri);
-    // const imagePng = new Parse.file("photoPng.png",imageReceived);
-    // const {passangers} = travel;
+     const {passangers} = travel;
+    const labeledFaceDescriptors = await Promise.all(
+      passangers.map(async label => {
+        const imageReceived = new Image(dataUri);
+        const passPhoto = new Image(label.photoUrl);
+        const img = await faceapi.fetchImage(imageReceived)
+        
+        const fullFaceDescription = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
+        
+        if (!fullFaceDescription) {
+          throw new Error(`no faces detected for ${label}`)
+        }
+        
+        const faceDescriptors = [fullFaceDescription.descriptor]
+        return new faceapi.LabeledFaceDescriptors(passPhoto, faceDescriptors)
+      })
+    )
 
-    // passangers.map(pass => {
-    //    const findPerson = await FaceApi.verificar( imagePng, pass.photoUrl);
-    //    if(findPerson.similarity > 0.85){
-    //     pass = await Passanger.update({
-    //       checked: true
-    //     });
-    //     return response.json(pass);
-    //    }
-    // });
-    return response.json(travel);
+    const maxDescriptorDistance = 0.6
+    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, maxDescriptorDistance)
+
+    const results = fullFaceDescriptions.map(fd => faceMatcher.findBestMatch(fd.descriptor))
+    
+      if(results >= 0.6){
+            label = await Passanger.update({
+              checked: true
+            });
+        return response.json(label);
+      }
+  
+      return response.json(passangers);
   }
 };
