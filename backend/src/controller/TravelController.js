@@ -30,8 +30,8 @@ module.exports = {
     const { travel_number, date, dataUri } = request.body;
 
     let travel = await Travel.findOne({ travel_number, date });
-     const {passangers} = travel;
-    const labeledFaceDescriptors = await Promise.all(
+      const {passangers} = travel;
+      const labeledFaceDescriptors = await Promise.all(
       passangers.map(async label => {
         const imageReceived = new Image(dataUri);
         const passPhoto = new Image(label.photoUrl);
